@@ -1,21 +1,22 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react'
+import styled from 'styled-components/native'
 
-export default class App extends React.Component {
+const StyledView = styled.View`
+  background-color: papayawhip;
+`
+
+const StyledText = styled.Text`
+  color: palevioletred;
+`
+
+class MyReactNativeComponent extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-      </View>
-    );
+      <StyledView>
+        <StyledText>Hello World!</StyledText>
+      </StyledView>
+    )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default MyReactNativeComponent;
