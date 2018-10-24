@@ -1,10 +1,15 @@
-version: '2.1'
+version: '3.1'
 
 services:
 
   collector:
+    links:
+      - "db:db"
     image: snapcart_clone_collector
     build: ./collector
+    volumes:
+      - ./collector:/usr/src/app
+      - /app/node_modules
     environment:
       NODE_ENV: development
     ports:
@@ -20,3 +25,10 @@ services:
   #     dockerfile: Dockerfile
   #   ports:
   #     - 5000:5000
+
+  db:
+    image: postgres
+    restart: always
+    environment: 
+      POSTGRES_PASSWORD: securepassftw
+
