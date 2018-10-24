@@ -3,10 +3,15 @@
 module.exports = {
   development: {
     client: 'pg',
-    connection:'postgres://localhost/collector',
-    // migrations: {
-    //   directory: './db/migrations'
-    // },
+    connection: {
+      host: 'db',
+      database: 'snclone',
+      user: 'postgres',
+      password: 'securepassftw',
+    },
+    migrations: {
+      directory: './migrations'
+    },
     // seeds: {
     //   directory: './db/seeds/dev'
     // },

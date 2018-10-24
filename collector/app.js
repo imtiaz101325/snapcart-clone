@@ -3,9 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var session = require('express-session');
+var passport = require('passport');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+
+const { NODE_ENV } = process.env;
 
 var app = express();
 
@@ -19,7 +23,19 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const environment = process.env.NODE_ENV || 'development';    // if something else isn't setting ENV, use development
+var sess = {
+  secret: 'keyboard cat',
+  cookie: {}
+}
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1); // trust first proxy
+  sess.cookie.secure = true; // serve secure cookies
+}
+
+app.use(session(sess));
+
+const environment = NODE_ENV || 'development';    // if something else isn't setting ENV, use development
 const configuration = require('./knexfile')[environment];    // require environment's settings from knexfile
 const database = require('knex')(configuration);              // connect to DB via knex using env's settings
 
