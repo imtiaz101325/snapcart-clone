@@ -1,0 +1,20 @@
+version: '2.1'
+
+services:
+  collector:
+    image: snapcart_clone_collector
+    build: ./collector
+    environment:
+      NODE_ENV: development
+    ports:
+      - 4000:4000
+      - 9229:9229
+    ## set your startup file here
+    command: node --inspect index.js
+  consumer:
+    image: snapcart_clone_consumer
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000

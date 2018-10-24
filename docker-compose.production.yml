@@ -1,0 +1,15 @@
+version: '2.1'
+
+services:
+  collector:
+    image: snapcart_clone_collector
+    build: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 4000:4000
+  consumer:
+    image: snapcart_clone_consumer
+    build: .
+    ports:
+      - 5000:5000
