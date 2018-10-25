@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "snapcart_clone_app",
-    "description": "This project is really great.",
+    "description": "A snapcart clone for educational purposes",
     "slug": "snapcart_clone_app",
     "privacy": "public",
     "sdkVersion": "30.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": ["android"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,9 +19,6 @@
     },
     "assetBundlePatterns": [
       "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    }
+    ]
   }
 }
