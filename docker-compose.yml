@@ -10,6 +10,8 @@ services:
       POSTGRES_PASSWORD: securepassftw
     volumes:
      - ./database:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
 
   collector:
     links:
@@ -20,9 +22,9 @@ services:
     build: ./collector
     volumes:
       - ./collector:/usr/src/app
-      - /app/node_modules
-    environment:
-      NODE_ENV: development
+      - /usr/src/app/node_modules
+    env_file:
+      - ./collector/.env
     ports:
       - 4000:4000
       - 9229:9229
