@@ -1,25 +1,36 @@
-const { ApolloServer, makeExecutableSchema } = require('apollo-server-express');
+const { ApolloServer, makeExecutableSchema, gql, GraphQLUpload } = require('apollo-server-express');
 
 const TypeDefs = require('./types');
 const QueryDefs = require('./queries');
 const MutationDefs = require('./mutations');
+const Resolvers = require('./resolvers');
 
-const knex = require('../database');
-const userMethods = require('../database/user');
+const RootDef = gql`
+  type Query {
+    noop: String
+  }
+
+  type Mutation {
+    noop: String
+  }
+`;
 
 const resolvers = {
+  Upload: GraphQLUpload,
   Query: {
-    user: (_, { id, type }) => knex('users').where(type, id).then( res => res[0] ),
-    users: () => knex.select().from('users'),
+    noop: () => "",
+    ...Resolvers.Query
   },
   Mutation: {
-    upsertUser: (_, { id, type, user }) => userMethods.upsert(id, type, user)
+    noop: () => "",
+    ...Resolvers.Mutation   
   }
 };
 
 const schema = makeExecutableSchema({
   typeDefs: [
     ...TypeDefs,
+    RootDef,
     ...QueryDefs,
     ...MutationDefs
   ],

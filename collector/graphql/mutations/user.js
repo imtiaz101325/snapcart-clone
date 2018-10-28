@@ -8,7 +8,7 @@ const UserMutation = gql`
     photo_url: String!
   }
 
-  type Mutation {
+  extend type Mutation {
     upsertUser(id: ID!, type: String!, user: userInput! ): User!
   }
 `;
