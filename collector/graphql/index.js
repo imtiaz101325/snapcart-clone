@@ -1,42 +1,44 @@
 const { ApolloServer, gql } = require('apollo-server-express');
-const {
-  GraphQLDateTime
-} = require('graphql-iso-date');
 
 const knex = require('../database');
-const user = require('../database/user');
+const userMethods = require('../database/user');
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
 
-  scalar DateTime
-
   type User {
     id: ID,
-    googleid: ID,
-    name: String,
-    email: String,
-    photo_url: String,
-    crated_at: DateTime,
+    googleid: ID! 
+    name: String!
+    email: String!
+    photo_url: String
   }
 
   type Query {
+    user(id: ID!, type: String!): User!
     users: [User]
   }
 
+  input userInput {
+    googleid: ID!
+    name: String!
+    email: String!
+    photo_url: String!
+  }
+
   type Mutation {
-    upsertUser(id: ID, type: String): Response
+    upsertUser(id: ID!, type: String!, user: userInput! ): User!
   }
 `;
 
 // Provide resolver functions for your schema fields
 const resolvers = {
-  DateTime: GraphQLDateTime,
   Query: {
+    user: (_, { id, type }) => knex('users').where(type, id).then( res => res[0] ),
     users: () => knex.select().from('users'),
   },
   Mutation: {
-    upsertUser: (id, type) => user.upsert(id, type)
+    upsertUser: (_, { id, type, user }) => userMethods.upsert(id, type, user)
   }
 };
 

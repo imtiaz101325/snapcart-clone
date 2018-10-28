@@ -1,3 +1,11 @@
-import createStackNavigator from './create-switch-navigator';
+import React from 'react';
+import { ApolloProvider } from "react-apollo";
 
-export default createStackNavigator;
+import StackNavigator from './create_switch_navigator';
+import client from './apollo_client';
+
+export default () => (
+  <ApolloProvider client={client}>
+    <StackNavigator />
+  </ApolloProvider>
+)
