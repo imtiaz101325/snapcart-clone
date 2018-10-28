@@ -1,45 +1,40 @@
-const { ApolloServer, gql } = require('apollo-server-express');
+const { ApolloServer, makeExecutableSchema, gql, GraphQLUpload } = require('apollo-server-express');
 
-const knex = require('../database');
-const userMethods = require('../database/user');
+const TypeDefs = require('./types');
+const QueryDefs = require('./queries');
+const MutationDefs = require('./mutations');
+const Resolvers = require('./resolvers');
 
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-
-  type User {
-    id: ID,
-    googleid: ID! 
-    name: String!
-    email: String!
-    photo_url: String
-  }
-
+const RootDef = gql`
   type Query {
-    user(id: ID!, type: String!): User!
-    users: [User]
-  }
-
-  input userInput {
-    googleid: ID!
-    name: String!
-    email: String!
-    photo_url: String!
+    noop: String
   }
 
   type Mutation {
-    upsertUser(id: ID!, type: String!, user: userInput! ): User!
+    noop: String
   }
 `;
 
-// Provide resolver functions for your schema fields
 const resolvers = {
+  Upload: GraphQLUpload,
   Query: {
-    user: (_, { id, type }) => knex('users').where(type, id).then( res => res[0] ),
-    users: () => knex.select().from('users'),
+    noop: () => "",
+    ...Resolvers.Query
   },
   Mutation: {
-    upsertUser: (_, { id, type, user }) => userMethods.upsert(id, type, user)
+    noop: () => "",
+    ...Resolvers.Mutation   
   }
 };
 
-module.exports = new ApolloServer({ typeDefs, resolvers });
+const schema = makeExecutableSchema({
+  typeDefs: [
+    ...TypeDefs,
+    RootDef,
+    ...QueryDefs,
+    ...MutationDefs
+  ],
+  resolvers
+})
+
+module.exports = new ApolloServer({ schema });
