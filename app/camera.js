@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, View, TouchableOpacity, ActivityIndicator, AsyncStorage } from 'react-native';
 import { Camera, Permissions } from 'expo';
 import styled from 'styled-components/native';
 import { ReactNativeFile } from 'apollo-upload-client';
@@ -27,6 +27,7 @@ export default class CameraExample extends React.Component {
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
+    id: null
   };
 
   async componentWillMount() {
@@ -37,17 +38,33 @@ export default class CameraExample extends React.Component {
   snap = async (singleUpload) => {
     if (this.camera) {
       try {
-        let photo = await this.camera.current.takePictureAsync();
-        console.log(photo)
+        const photo = await this.camera.current.takePictureAsync();
+        const id = null
+        if (this.state.id) {
+          id = this.state.id;
+        } else {
+          id = await AsyncStorage.getItem('googleid');
+        }
 
+        const uri = photo.uri;
+        const patharr = uri.split('/');
+        const name = patharr[patharr.length - 1];
+        
         const file = new ReactNativeFile({
-          uri: photo.uri,
-          name: 'some_name.jpg',
+          uri,
+          name,
           type: 'image/jpeg'
         });
 
-        singleUpload(file);
+        singleUpload({
+          variables: { 
+            file,
+            userid: id
+        }});
 
+        this.setState({
+          id
+        });
       } catch(err) {
         console.log(err)
       }
@@ -56,10 +73,8 @@ export default class CameraExample extends React.Component {
 
   render() {
     const SINGLE_UPLOAD = gql`
-      mutation SingleUpload($file: Upload!) {
-        singleUpload(file: $file) {
-          filename
-        }
+      mutation SingleUpload($file: Upload!, $userid: ID!) {
+        singleUpload(file: $file, userid: $userid)
       }
     `;
 

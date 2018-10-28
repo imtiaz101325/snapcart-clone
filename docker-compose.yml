@@ -23,6 +23,8 @@ services:
     volumes:
       - ./collector:/usr/src/app
       - /usr/src/app/node_modules
+      - /usr/src/app/public
+      - images:/usr/src/app/images
     env_file:
       - ./collector/.env
     ports:
@@ -39,3 +41,5 @@ services:
   #   ports:
   #     - 5000:5000
 
+volumes: 
+  images:

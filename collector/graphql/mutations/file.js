@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express');
 
 const FileMutation = gql`
   extend type Mutation {
-    singleUpload(file: Upload!): File!
+    singleUpload(file: Upload!, userid: ID!): ID!
   }
 `;
 

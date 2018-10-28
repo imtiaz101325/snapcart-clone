@@ -1,4 +1,8 @@
 const fs = require('fs');
+const path = require('path');
+const shortid = require('shortid');
+
+const knex = require('../../database');
 
 module.exports = {
   Query: {
@@ -8,18 +12,47 @@ module.exports = {
     }
   },
   Mutation: {
-    singleUpload: async (parent, { file }) =>  {
-      const { stream, filename, mimetype, encoding } = await file;
+    singleUpload: async (parent, { file, userid }) =>  {
+      const { stream, filename } = await file;
 
-      // 1. Validate file metadata.
+      //TODO: Validate file metadata.
 
-      // 2. Stream file contents into local filesystem or cloud storage:
+      //TODO: Stream file contents into cloud storage:
       // https://nodejs.org/api/stream.html
+      const uuid = shortid.generate();
+      const localFileName = `${userid}-${uuid}-${filename}`;
+      const filepath = path.join(__dirname, "../../public/images", localFileName);
+      try {
+        const fsresult = await new Promise((resolve, reject) =>
+          stream
+            .on('error', error => {
+              if (stream.truncated)
+                // Delete the truncated file
+                fs.unlinkSync(filepath)
+              reject(error)
+            })
+            .pipe(fs.createWriteStream(filepath))
+            .on('error', error => reject(error))
+            .on('finish', () => resolve({ uuid, filename: localFileName }))
+        );
 
-      // 3. Record the file upload in your DB.
-      // const id = await recordFile( … )
+        console.log(fsresult);
 
-      return { stream, filename, mimetype, encoding };
+        const user = await knex('users').where('googleid', userid);
+
+        const dbresult = await knex('uploads').insert({
+          userid: user[0].id,
+          fileid: uuid,
+          path: filepath
+        });
+
+        console.log(dbresult)
+
+        return uuid;
+      } catch(err) {
+        console.log(err);
+        return null;
+      }
     }
   }
 }
