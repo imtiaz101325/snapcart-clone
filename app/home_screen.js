@@ -3,9 +3,14 @@ import {
   AsyncStorage,  
   Button,
 } from 'react-native';
+import styled from 'styled-components/native';
 
 import Container from './shared/container';
 import Profile from './profile';
+
+const HomeScreenContainer = styled(Container)`
+  justify-content: space-between;
+`;
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -30,18 +35,17 @@ class HomeScreen extends React.Component {
     } = this.state;
 
     return (
-      <Container>
+      <HomeScreenContainer>
         {
           !!id && <Profile id={id} />         
         }
-        <Button title="Show me more of the app" onPress={this._showMoreApp} />
-        <Button title="Actually, sign me out :)" onPress={this._signOutAsync} />
-        <Button title="Bring up the camera" onPress={
+        <Button title="Take picture" onPress={
           () => {
             this.props.navigation.navigate('Camera');
           }
         } />
-      </Container>
+        <Button title="Sign Out" onPress={this._signOutAsync} />
+      </HomeScreenContainer>
     );
   }
 

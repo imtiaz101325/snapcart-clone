@@ -1,8 +1,26 @@
 import React from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import { Camera, Permissions } from 'expo';
+import styled from 'styled-components/native';
+
+import Container from './shared/container';
+
+const StyledCamera = styled(Camera)`
+  flex: 1;
+`;
+
+const StyledTouchableOpacity = styled(TouchableOpacity)`
+  flex: 1;
+  background-color: transparent;
+`;
 
 export default class CameraExample extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.camera = React.createRef();
+  }
+
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
@@ -13,6 +31,18 @@ export default class CameraExample extends React.Component {
     this.setState({ hasCameraPermission: status === 'granted' });
   }
 
+  snap = async () => {
+    if (this.camera) {
+      console.log(this.camera)
+      try {
+        let photo = await this.camera.current.takePictureAsync();
+        console.log(photo)
+      } catch(err) {
+        console.log(err)
+      }
+    }
+  };
+
   render() {
     const { hasCameraPermission } = this.state;
     if (hasCameraPermission === null) {
@@ -21,35 +51,11 @@ export default class CameraExample extends React.Component {
       return <Text>No access to camera</Text>;
     } else {
       return (
-        <View style={{ flex: 1 }}>
-          <Camera style={{ flex: 1 }} type={this.state.type}>
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: 'transparent',
-                flexDirection: 'row',
-              }}>
-              <TouchableOpacity
-                style={{
-                  flex: 0.1,
-                  alignSelf: 'flex-end',
-                  alignItems: 'center',
-                }}
-                onPress={() => {
-                  this.setState({
-                    type: this.state.type === Camera.Constants.Type.back
-                      ? Camera.Constants.Type.front
-                      : Camera.Constants.Type.back,
-                  });
-                }}>
-                <Text
-                  style={{ fontSize: 18, marginBottom: 10, color: 'white' }}>
-                  {' '}Flip{' '}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </Camera>
-        </View>
+        <Container>
+          <StyledCamera type={this.state.type} innerRef={this.camera}>
+            <StyledTouchableOpacity onPress={this.snap}></StyledTouchableOpacity>
+          </StyledCamera>
+        </Container>
       );
     }
   }

@@ -2,9 +2,11 @@ import React from 'react';
 import {
   AsyncStorage,
   Button,
+  ActivityIndicator
 } from 'react-native';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import styled from 'styled-components/native';
 
 const AUTH = gql`
   mutation UpsertUser($id: ID!, $type: String!, $user: userInput! ) {
@@ -12,6 +14,10 @@ const AUTH = gql`
       googleid
     }
   }
+`;
+
+const SingnInContainer = styled(Container)`
+  flex-direction: column-reverse;
 `;
 
 class SignInScreen extends React.Component {
@@ -29,17 +35,19 @@ class SignInScreen extends React.Component {
       navigation
     } = this.props;
 
-    return <Container>
+    return <SingnInContainer>
       <Mutation mutation={AUTH} update={ async (_,{ data }) => {
         await AsyncStorage.setItem('googleid', data.upsertUser.googleid);
         navigation.navigate('App'); 
       }}>
         {
-          upsertUser => 
-            <Button title="Sign in!" onPress={() => this._signInAsync(upsertUser) } />
+          (upsertUser, { loading }) => 
+            loading ?
+              <ActivityIndicator /> :
+              <Button title="Sign in!" onPress={() => this._signInAsync(upsertUser) } />
         }
       </Mutation>
-    </Container>
+    </SingnInContainer>
   }
 
   _signInAsync = async (mutation) => {
