@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "develop": "knex migrate:latest --env development && node --inspect=0.0.0.0:9229 ./bin/www",
+    "develop": "knex migrate:latest --env development && nodemon --inspect=0.0.0.0:9229 ./bin/www",
     "migrate": "knex migrate:latest --env development",
     "rollback": "knex migrate:rollback"
   },
@@ -22,5 +22,8 @@
     "knex": "^0.15.2",
     "morgan": "~1.9.0",
     "pg": "^7.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.5"
   }
 }
