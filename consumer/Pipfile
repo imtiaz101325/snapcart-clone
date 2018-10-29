@@ -6,8 +6,12 @@ name = "pypi"
 [packages]
 records = "*"
 "psycopg2-binary" = "*"
+pillow = "*"
+pytesseract = "*"
+opencv-python = "*"
 
 [dev-packages]
+pylint = "*"
 
 [requires]
 python_version = "3.6"
