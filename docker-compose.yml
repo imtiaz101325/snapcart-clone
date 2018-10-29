@@ -24,22 +24,31 @@ services:
       - ./collector:/usr/src/app
       - /usr/src/app/node_modules
       - /usr/src/app/public
-      - images:/usr/src/app/images
+      - images:/usr/src/app/public/images
     env_file:
       - ./collector/.env
     ports:
       - 4000:4000
       - 9229:9229
-    ## set your startup file here
     command: npm run develop
 
-  # consumer:
-  #   image: snapcart_clone_consumer
-  #   build:
-  #     context: ./consumer
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - 5000:5000
+  consumer:
+    links:
+      - db
+    depends_on:
+      - db
+    image: snapcart_clone_consumer
+    build: ./consumer
+    volumes:
+      - ./consumer:/app
+      - /app/images
+      - images:/app/images
+    env_file:
+      - ./consumer/.env
+    ports:
+      - 5000:5000
+      - 5001:5001
+    command: python3 -m http.server 5000
 
 volumes: 
   images:
