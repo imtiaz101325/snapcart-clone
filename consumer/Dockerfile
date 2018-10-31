@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 RUN apt update \
     && apt upgrade -y \
-    && apt install wget locales python3-dev python3-pip tesseract-ocr -y \
+    && apt install wget locales python3-dev python3-pip tesseract-ocr libsm6 libxext6 -y \
     && apt clean \
     && apt autoremove \ 
     && locale-gen en_US.UTF-8 \
